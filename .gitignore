@@ -1,0 +1,75 @@
+# Игнорируем файлы и папки, создаваемые Visual Studio
+.vscode/
+.vs/
+bin/
+obj/
+packages/
+
+# Игнорируем файлы среды выполнения .NET
+*.user
+*.suo
+*.dll
+*.pdb
+
+# Игнорируем временные файлы и папки
+[Tt]emp/
+[Oo]bj/
+[Bb]in/
+[Rr]elease/
+[Rr]eleases/
+[Ll]og/
+
+# Игнорируем конфигурационные файлы
+#appsettings.json
+#appsettings.Development.json
+
+# Игнорируем файлы пакетного менеджера NuGet
+packages/
+*.nupkg
+
+# Игнорируем файлы логирования
+*.log
+*.logs
+
+# Игнорируем файлы отладки
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Игнорируем папку с журналами покрытия кода
+coverage/
+
+# Игнорируем папку с результатами сборки
+node_modules/
+
+# Игнорируем папку с файлами для миграции баз данных Entity Framework
+/Database/Migrations/
+
+# Игнорируем файлы конфигурации IDE
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Игнорируем файлы авторизации и безопасности
+appsettings*.json
+*.key
+*.pfx
+
+# Игнорируем папку с кэшем и временными файлами
+[Cc]ache/
+[Tt]emp/
+[Ii]ntermediate/
+[Tt]estResults/
+
+# Игнорируем папку с файлами локализации
+[Rr]esources/
+
+# Игнорируем папку с резервными копиями
+[Bb]ackup/
+[Ll]og/
+
+# Игнорируем файлы конфигурации сервера IIS
+IISLogs/
