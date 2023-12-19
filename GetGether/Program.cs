@@ -28,6 +28,7 @@ namespace GetGether
             };
 
             var builder = WebApplication.CreateBuilder(args);
+            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
             builder.Services.AddDbContext<GlobalDBContext>(options => { options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); });
 
@@ -61,7 +62,17 @@ namespace GetGether
 
             builder.Services.AddScoped<ITestService, TestService>();
             builder.Services.AddScoped<IBaseRepository<Survey>, BaseRepository<Survey>>();
-            builder.Services.AddCors();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                    policy =>
+                                    {
+                                        policy.WithOrigins("http://localhost:3000")
+                                        .AllowAnyMethod()
+                                        .AllowAnyHeader()
+                                        .AllowCredentials();
+                                    });
+            });
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
 
 
@@ -85,7 +96,7 @@ namespace GetGether
                 app.UseSwaggerUI();
             }
 
-            app.UseCors(builder => builder.AllowAnyOrigin());
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseHttpsRedirection();
 
