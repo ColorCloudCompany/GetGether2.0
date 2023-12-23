@@ -1,35 +1,17 @@
 ﻿using GetGether.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace GetGether.Data
 {
-    public class GlobalDBContext : IdentityDbContext<User>
+    public class GlobalDBContext : IdentityDbContext
     {
-        //public GlobalDBContext(DbContextOptions<GlobalDBContext> options) : base(options) { }
-
-        public GlobalDBContext()
-        {
-        }
-
-        public GlobalDBContext(DbContextOptions<GlobalDBContext> options) : base(options)
+        public GlobalDBContext(DbContextOptions options) : base(options)
         {
 
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                // Здесь укажите строку подключения к вашей базе данных
-                optionsBuilder.UseSqlServer("Server=.; Database=GetGether; Trusted_Connection=true; MultipleActiveResultSets=True; TrustServerCertificate=True");
-            }
-        }
-
-
-        public DbSet<Survey> Surveys { get; set; }
-        public DbSet<Hobbi> Hobbies { get; set; }
+        public DbSet<Employee> Employee { get; set; }
     }
 }
 

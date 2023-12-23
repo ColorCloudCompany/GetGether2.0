@@ -1,17 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-
-namespace GetGether.Models
+﻿namespace GetGether.Models
 {
-    public class User : IdentityUser
+    public class LoginUser
     {
-        public User(string email, string password)
-        { 
-            Email = email;
-            Password = password;
-        }
-        public string Email { get; set; }
+        public string UserName { get; set; }
         public string Password { get; set; }
-
     }
 }
