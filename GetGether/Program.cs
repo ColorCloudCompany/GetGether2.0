@@ -13,6 +13,7 @@ namespace GetGether
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
             // Add services to the container.      
             builder.Services.AddDbContext<GlobalDBContext>(options =>
@@ -49,6 +50,33 @@ namespace GetGether
 
 
             builder.Services.AddTransient<IAuthService, AuthService>();
+
+
+
+            builder.Services.AddAuthorization();
+
+            
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                    policy =>
+                                    {
+                                        policy.WithOrigins("http://localhost:3000")
+                                        .AllowAnyMethod()
+                                        .AllowAnyHeader()
+                                        .AllowCredentials();
+                                    });
+            });
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+
+
+            //builder.Services.AddTransient<ITestService, TestService>();
+            //builder.Services.AddTransient<IBaseRepository<Survey>, BaseRepository<Survey>>();
+
+
+            // Add services to the container.
+
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -62,6 +90,11 @@ namespace GetGether
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+
+
+            //app.UseCors(MyAllowSpecificOrigins);
+
 
             app.UseHttpsRedirection();
 
