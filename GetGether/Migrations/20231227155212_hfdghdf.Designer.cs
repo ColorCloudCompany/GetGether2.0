@@ -4,6 +4,7 @@ using GetGether.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GetGether.Migrations
 {
     [DbContext(typeof(GlobalDBContext))]
-    partial class GlobalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231227155212_hfdghdf")]
+    partial class hfdghdf
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +24,28 @@ namespace GetGether.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("GetGether.Models.Event", b =>
+            modelBuilder.Entity("GetGether.Models.Employee", b =>
+                {
+                    b.Property<int>("EmployeeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeId"), 1L, 1);
+
+                    b.Property<string>("Family")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EmployeeId");
+
+                    b.ToTable("Employee");
+                });
+
+            modelBuilder.Entity("GetGether.Models.LoginUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,44 +53,23 @@ namespace GetGether.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Descriprion")
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("OrganizerUserNameId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SurveyName")
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrganizerUserNameId");
-
-                    b.ToTable("Event");
-                });
-
-            modelBuilder.Entity("GetGether.Models.EventParticipant", b =>
-                {
-                    b.Property<int>("EventId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProfileUserNameId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("EventId", "ProfileUserNameId");
-
-                    b.HasIndex("ProfileUserNameId");
-
-                    b.ToTable("EventParticipant");
+                    b.ToTable("loginUsers");
                 });
 
             modelBuilder.Entity("GetGether.Models.Profile", b =>
                 {
-                    b.Property<string>("UserNameId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<int>("Age")
                         .HasColumnType("int");
@@ -76,9 +78,9 @@ namespace GetGether.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserNameId");
+                    b.HasKey("Id");
 
-                    b.ToTable("Profiles");
+                    b.ToTable("Profile");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -279,34 +281,15 @@ namespace GetGether.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("GetGether.Models.Event", b =>
+            modelBuilder.Entity("GetGether.Models.Profile", b =>
                 {
-                    b.HasOne("GetGether.Models.Profile", "Organizer")
-                        .WithMany("Events")
-                        .HasForeignKey("OrganizerUserNameId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("GetGether.Models.LoginUser", "User")
+                        .WithOne("UserProfile")
+                        .HasForeignKey("GetGether.Models.Profile", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Organizer");
-                });
-
-            modelBuilder.Entity("GetGether.Models.EventParticipant", b =>
-                {
-                    b.HasOne("GetGether.Models.Event", "Event")
-                        .WithMany("EventParticipants")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("GetGether.Models.Profile", "Profile")
-                        .WithMany("EventParticipants")
-                        .HasForeignKey("ProfileUserNameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("Profile");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -360,16 +343,10 @@ namespace GetGether.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GetGether.Models.Event", b =>
+            modelBuilder.Entity("GetGether.Models.LoginUser", b =>
                 {
-                    b.Navigation("EventParticipants");
-                });
-
-            modelBuilder.Entity("GetGether.Models.Profile", b =>
-                {
-                    b.Navigation("EventParticipants");
-
-                    b.Navigation("Events");
+                    b.Navigation("UserProfile")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

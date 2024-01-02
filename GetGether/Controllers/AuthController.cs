@@ -17,7 +17,7 @@ namespace GetGether.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> RegisterUser(LoginUser user)
+        public async Task<IActionResult> RegisterUser(RegisterUser user)
         {
             if (await _authService.RegisterUser(user))
             {

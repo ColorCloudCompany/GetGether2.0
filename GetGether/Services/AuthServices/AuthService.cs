@@ -1,5 +1,7 @@
-﻿using GetGether.Models;
+﻿using GetGether.Data;
+using GetGether.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -12,20 +14,42 @@ namespace GetGether.Services
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _config;
+        private readonly GlobalDBContext _dbContext;
 
-        public AuthService(UserManager<IdentityUser> userManager, IConfiguration config)
+
+
+
+        public AuthService(UserManager<IdentityUser> userManager, IConfiguration config, GlobalDBContext dbContext)
         {
             _userManager = userManager;
             _config = config;
+            _dbContext = dbContext;
         }
 
-        public async Task<bool> RegisterUser(LoginUser user)
+        public async Task<bool> RegisterUser(RegisterUser user)
         {
             var identityUser = new IdentityUser
             {
                 UserName = user.UserName,
                 Email = user.UserName
+                
+                
             };
+
+            var UserProfile = new Profile
+            {
+                UserNameId = user.UserName,
+                Name = user.UserProfile.Name,
+                Age = user.UserProfile.Age,
+
+            };
+
+
+            _dbContext.Profiles.Add(UserProfile);
+            _dbContext.SaveChanges(); // Сохранение изменений в базе данных
+            
+
+
 
             var result = await _userManager.CreateAsync(identityUser, user.Password);
             return result.Succeeded;
@@ -48,6 +72,7 @@ namespace GetGether.Services
             {
                 new Claim(ClaimTypes.Email,user.UserName),
                 new Claim(ClaimTypes.Role,"Admin"),
+                new Claim(ClaimTypes.NameIdentifier, user.UserName.ToString()),
             };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("Jwt:Key").Value));

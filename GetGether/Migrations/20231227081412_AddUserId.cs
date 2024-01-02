@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GetGether.Migrations
 {
-    public partial class d : Migration
+    public partial class AddUserId : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

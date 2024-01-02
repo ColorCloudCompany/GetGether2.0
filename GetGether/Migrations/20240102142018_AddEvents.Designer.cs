@@ -4,6 +4,7 @@ using GetGether.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GetGether.Migrations
 {
     [DbContext(typeof(GlobalDBContext))]
-    partial class GlobalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240102142018_AddEvents")]
+    partial class AddEvents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +23,21 @@ namespace GetGether.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("EventProfile", b =>
+                {
+                    b.Property<int>("EventsId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ParticipantsUserNameId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("EventsId", "ParticipantsUserNameId");
+
+                    b.HasIndex("ParticipantsUserNameId");
+
+                    b.ToTable("EventProfile");
+                });
 
             modelBuilder.Entity("GetGether.Models.Event", b =>
                 {
@@ -44,7 +61,8 @@ namespace GetGether.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrganizerUserNameId");
+                    b.HasIndex("OrganizerUserNameId")
+                        .IsUnique();
 
                     b.ToTable("Event");
                 });
@@ -279,12 +297,27 @@ namespace GetGether.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("EventProfile", b =>
+                {
+                    b.HasOne("GetGether.Models.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GetGether.Models.Profile", null)
+                        .WithMany()
+                        .HasForeignKey("ParticipantsUserNameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("GetGether.Models.Event", b =>
                 {
                     b.HasOne("GetGether.Models.Profile", "Organizer")
-                        .WithMany("Events")
-                        .HasForeignKey("OrganizerUserNameId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithOne()
+                        .HasForeignKey("GetGether.Models.Event", "OrganizerUserNameId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Organizer");
@@ -293,15 +326,15 @@ namespace GetGether.Migrations
             modelBuilder.Entity("GetGether.Models.EventParticipant", b =>
                 {
                     b.HasOne("GetGether.Models.Event", "Event")
-                        .WithMany("EventParticipants")
+                        .WithMany()
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GetGether.Models.Profile", "Profile")
-                        .WithMany("EventParticipants")
+                        .WithMany()
                         .HasForeignKey("ProfileUserNameId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Event");
@@ -358,18 +391,6 @@ namespace GetGether.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("GetGether.Models.Event", b =>
-                {
-                    b.Navigation("EventParticipants");
-                });
-
-            modelBuilder.Entity("GetGether.Models.Profile", b =>
-                {
-                    b.Navigation("EventParticipants");
-
-                    b.Navigation("Events");
                 });
 #pragma warning restore 612, 618
         }

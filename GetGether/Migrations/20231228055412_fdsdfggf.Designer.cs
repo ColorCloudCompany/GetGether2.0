@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GetGether.Migrations
 {
     [DbContext(typeof(GlobalDBContext))]
-    [Migration("20231220090153_d")]
-    partial class d
+    [Migration("20231228055412_fdsdfggf")]
+    partial class fdsdfggf
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
