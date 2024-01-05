@@ -43,6 +43,7 @@ namespace GetGether.Data
 
 
         public DbSet<Profile> Profiles { get; set; }
+        public DbSet<Event> Events { get; set; }
 
         
     }

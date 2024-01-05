@@ -11,14 +11,14 @@ namespace GetGether.Models
 
     public class Event : BaseModel
     {
-        public string SurveyName { get; set; }   //Название события
+        public string EventName { get; set; }   //Название события
 
         [ForeignKey("Organizer")]
         public string OrganizerUserNameId { get; set; } // Внешний ключ для организатора
         public Profile Organizer { get; set; }    // Организатор события
 
 
-        public string Descriprion { get; set; }  //Описание события
+        public string Description { get; set; }  //Описание события
 
         public virtual ICollection<EventParticipant> EventParticipants { get; set; }
 

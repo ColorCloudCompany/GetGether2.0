@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GetGether.Migrations
 {
     [DbContext(typeof(GlobalDBContext))]
-    [Migration("20231228055412_fdsdfggf")]
-    partial class fdsdfggf
+    [Migration("20240105063851_AddEvents")]
+    partial class AddEvents
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,25 +24,63 @@ namespace GetGether.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("GetGether.Models.Employee", b =>
+            modelBuilder.Entity("GetGether.Models.Event", b =>
                 {
-                    b.Property<int>("EmployeeId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Family")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EventName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrganizerUserNameId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizerUserNameId");
+
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("GetGether.Models.EventParticipant", b =>
+                {
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProfileUserNameId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("EventId", "ProfileUserNameId");
+
+                    b.HasIndex("ProfileUserNameId");
+
+                    b.ToTable("EventParticipant");
+                });
+
+            modelBuilder.Entity("GetGether.Models.Profile", b =>
+                {
+                    b.Property<string>("UserNameId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("EmployeeId");
+                    b.HasKey("UserNameId");
 
-                    b.ToTable("Employee");
+                    b.ToTable("Profiles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -243,6 +281,36 @@ namespace GetGether.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("GetGether.Models.Event", b =>
+                {
+                    b.HasOne("GetGether.Models.Profile", "Organizer")
+                        .WithMany("Events")
+                        .HasForeignKey("OrganizerUserNameId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Organizer");
+                });
+
+            modelBuilder.Entity("GetGether.Models.EventParticipant", b =>
+                {
+                    b.HasOne("GetGether.Models.Event", "Event")
+                        .WithMany("EventParticipants")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("GetGether.Models.Profile", "Profile")
+                        .WithMany("EventParticipants")
+                        .HasForeignKey("ProfileUserNameId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("Profile");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -292,6 +360,18 @@ namespace GetGether.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("GetGether.Models.Event", b =>
+                {
+                    b.Navigation("EventParticipants");
+                });
+
+            modelBuilder.Entity("GetGether.Models.Profile", b =>
+                {
+                    b.Navigation("EventParticipants");
+
+                    b.Navigation("Events");
                 });
 #pragma warning restore 612, 618
         }

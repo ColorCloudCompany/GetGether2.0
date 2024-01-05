@@ -21,7 +21,7 @@ namespace GetGether.Controllers
         }
 
 
-        [HttpPost("GetBasePage")]
+        [HttpGet("GetBasePage")]
         public async Task<IActionResult> AuthTest()
         {
 

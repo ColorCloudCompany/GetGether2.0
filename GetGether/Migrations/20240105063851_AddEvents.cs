@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GetGether.Migrations
 {
-    public partial class AddUserId : Migration
+    public partial class AddEvents : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,17 +49,16 @@ namespace GetGether.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Employee",
+                name: "Profiles",
                 columns: table => new
                 {
-                    EmployeeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserNameId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Family = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Age = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Employee", x => x.EmployeeId);
+                    table.PrimaryKey("PK_Profiles", x => x.UserNameId);
                 });
 
             migrationBuilder.CreateTable(
@@ -168,6 +167,51 @@ namespace GetGether.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrganizerUserNameId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Events_Profiles_OrganizerUserNameId",
+                        column: x => x.OrganizerUserNameId,
+                        principalTable: "Profiles",
+                        principalColumn: "UserNameId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventParticipant",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    ProfileUserNameId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventParticipant", x => new { x.EventId, x.ProfileUserNameId });
+                    table.ForeignKey(
+                        name: "FK_EventParticipant_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_EventParticipant_Profiles_ProfileUserNameId",
+                        column: x => x.ProfileUserNameId,
+                        principalTable: "Profiles",
+                        principalColumn: "UserNameId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -206,6 +250,16 @@ namespace GetGether.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventParticipant_ProfileUserNameId",
+                table: "EventParticipant",
+                column: "ProfileUserNameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_OrganizerUserNameId",
+                table: "Events",
+                column: "OrganizerUserNameId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -226,13 +280,19 @@ namespace GetGether.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Employee");
+                name: "EventParticipant");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "Profiles");
         }
     }
 }
